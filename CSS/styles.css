@@ -55,7 +55,6 @@ body::after {
 .hero-container {
   position: relative;
   width: 100%;
-  /* No fixed height for any screen size */
   overflow: hidden;
 }
 
@@ -114,7 +113,6 @@ body::after {
   margin-top: 0;
 }
 
-/* Responsive styles */
 @media (max-width: 600px) {
   .gif-container {
     min-height: 180px;
@@ -138,11 +136,9 @@ body::after {
 @media (min-width: 601px) {
   .hero-container {
     width: 100%;
-    /* Remove: height: 100vh; */
   }
   .overlay-mask {
     width: 100%;
-    /* Remove: border-radius: 0 0 2vw 2vw; */
   }
   .gif-section {
     margin-top: 0;
@@ -226,7 +222,6 @@ body::after {
   align-items: center;
 }
 
-/* Two Column Section */
 .two-column-section {
   padding: 2rem 2rem;
   max-width: 1200px;
@@ -291,7 +286,6 @@ body::after {
   flex-shrink: 0;
 }
 
-/* Responsive two column section */
 @media (max-width: 768px) {
   .two-column-section {
     padding: 2rem 1rem;
@@ -315,7 +309,6 @@ body::after {
   }
 }
 
-/* Hamburger Menu Styles */
 .hamburger-menu {
   position: fixed;
   top: 20px;
@@ -351,7 +344,6 @@ body::after {
   pointer-events: none;
 }
 
-/* Navigation Container */
 .nav-container {
   position: fixed;
   top: 0;
@@ -477,7 +469,7 @@ body::after {
   flex-shrink: 0;
 }
 
-/* Responsive adjustments */
+
 @media (max-width: 600px) {
   .nav-container {
     width: 100%;
@@ -496,7 +488,6 @@ body::after {
   }
 }
 
-/* Footer with Glassmorphism */
 .footer {
   margin-top: 4rem;
   background: rgba(0, 0, 0, 0.144);
@@ -530,7 +521,6 @@ body::after {
   font-size: 0.9rem;
 }
 
-/* Responsive footer */
 @media (max-width: 768px) {
   .footer-bottom {
     padding: 1rem;
