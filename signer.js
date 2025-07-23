@@ -81,6 +81,80 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        // Cyan: Validate .cyan file type if provided
+        const cyanConfigInput = document.getElementById('cyanConfig');
+        if (cyanConfigInput && cyanConfigInput.files.length > 0) {
+            const cyanFile = cyanConfigInput.files[0];
+            if (!cyanFile.name.endsWith('.cyan')) {
+                showNotification('Invalid file type for Cyan Config. Please select a .cyan file.', 'error');
+                cyanConfigInput.value = '';
+                return;
+            }
+        }
+
+        // Build cyan flags from modifications
+        let cyanFlags = [];
+        
+        // Bundle ID modification
+        const modifyBundleId = document.getElementById('modifyBundleId');
+        const newBundleId = document.getElementById('newBundleId');
+        if (modifyBundleId && modifyBundleId.checked && newBundleId && newBundleId.value.trim()) {
+            cyanFlags.push(`--bundle-id "${newBundleId.value.trim()}"`);
+        }
+        
+        // App Name modification
+        const modifyAppName = document.getElementById('modifyAppName');
+        const newAppName = document.getElementById('newAppName');
+        if (modifyAppName && modifyAppName.checked && newAppName && newAppName.value.trim()) {
+            cyanFlags.push(`--name "${newAppName.value.trim()}"`);
+        }
+        
+        // Version modification
+        const modifyVersion = document.getElementById('modifyVersion');
+        const newVersion = document.getElementById('newVersion');
+        if (modifyVersion && modifyVersion.checked && newVersion && newVersion.value.trim()) {
+            cyanFlags.push(`--version "${newVersion.value.trim()}"`);
+        }
+        
+        // Minimum OS modification
+        const modifyMinOS = document.getElementById('modifyMinOS');
+        const newMinOS = document.getElementById('newMinOS');
+        if (modifyMinOS && modifyMinOS.checked && newMinOS && newMinOS.value.trim()) {
+            cyanFlags.push(`--min-os "${newMinOS.value.trim()}"`);
+        }
+        
+        // Inject Dylib
+        const injectDylib = document.getElementById('injectDylib');
+        const dylibFile = document.getElementById('dylibFile');
+        if (injectDylib && injectDylib.checked && dylibFile && dylibFile.files.length > 0) {
+            cyanFlags.push(`--inject "${dylibFile.files[0].name}"`);
+        }
+        
+        // Inject Deb
+        const injectDeb = document.getElementById('injectDeb');
+        const debFile = document.getElementById('debFile');
+        if (injectDeb && injectDeb.checked && debFile && debFile.files.length > 0) {
+            cyanFlags.push(`--inject "${debFile.files[0].name}"`);
+        }
+        
+        // Remove Watch App
+        const removeWatchApp = document.getElementById('removeWatchApp');
+        if (removeWatchApp && removeWatchApp.checked) {
+            cyanFlags.push('--remove-watch');
+        }
+        
+        // Remove App Extensions
+        const removeAppExtensions = document.getElementById('removeAppExtensions');
+        if (removeAppExtensions && removeAppExtensions.checked) {
+            cyanFlags.push('--remove-extensions');
+        }
+        
+        // Thin to ARM64
+        const thinARM64 = document.getElementById('thinARM64');
+        if (thinARM64 && thinARM64.checked) {
+            cyanFlags.push('--thin');
+        }
+
         resultDiv.textContent = "";
         loader.classList.remove("hidden");
 
@@ -88,6 +162,24 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("isPremium", currentUser.premium ? 'true' : 'false');
         formData.append("expiryDays", currentUser.premium ? "120" : "30");
         formData.append("username", currentUser.username);
+
+        // Cyan: Add cyanConfig file and cyanFlags to FormData if present
+        if (cyanConfigInput && cyanConfigInput.files.length > 0) {
+            formData.append('cyanConfig', cyanConfigInput.files[0]);
+        }
+        
+        // Add modification files to FormData
+        if (dylibFile && dylibFile.files.length > 0) {
+            formData.append('dylibFile', dylibFile.files[0]);
+        }
+        if (debFile && debFile.files.length > 0) {
+            formData.append('debFile', debFile.files[0]);
+        }
+        
+        // Add cyan flags if any modifications are selected
+        if (cyanFlags.length > 0) {
+            formData.append('cyanFlags', cyanFlags.join(' '));
+        }
 
         const button = form.querySelector('button[type="submit"]');
 if (button) {
@@ -226,10 +318,10 @@ function handleRegistrationError(error) {
                         "error"
                     );
                     input.value = "";
-                }
-            });
+            }
         });
-    }
+    });
+}
 
     function isValidFileType(file, inputId) {
         const validTypes = {
@@ -603,8 +695,7 @@ if (data.success) {
             maxFileSizeElement.textContent = '1 GB';
         }
     }
-
-    // Call this function when the page loads
+    
     updateMaxFileSize();
 
     const closePopupBtn = document.querySelector('#authPopup .close');
@@ -613,5 +704,74 @@ if (data.success) {
             authPopup.classList.add('hidden');
             authPopup.style.display = 'none';
         });
+    }
+    
+    const modificationCheckboxes = document.querySelectorAll('.modification-checkbox');
+    modificationCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const modificationItem = this.closest('.modification-item');
+            const inputs = modificationItem.querySelectorAll('input:not(.modification-checkbox), button');
+            
+            inputs.forEach(input => {
+                if (this.checked) {
+                    input.disabled = false;
+                    if (input.classList.contains('modification-input')) {
+                        input.style.opacity = '1';
+                    }
+                } else {
+                    input.disabled = true;
+                    if (input.classList.contains('modification-input')) {
+                        input.style.opacity = '0.5';
+                    }
+                }
+            });
+        });
+    });
+    
+    const modificationFileBtns = document.querySelectorAll('.modification-file-btn');
+    modificationFileBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const fileInput = this.previousElementSibling;
+            if (fileInput && !fileInput.disabled) {
+                fileInput.click();
+            }
+        });
+    });
+    
+    const modificationFiles = document.querySelectorAll('.modification-file');
+    modificationFiles.forEach(fileInput => {
+        fileInput.addEventListener('change', function() {
+            const button = this.nextElementSibling;
+            if (button && this.files.length > 0) {
+                button.textContent = this.files[0].name;
+            } else if (button) {
+                button.textContent = button.getAttribute('data-original-text') || 'Choose File';
+            }
+        });
+    });
+    
+    modificationFileBtns.forEach(btn => {
+        btn.setAttribute('data-original-text', btn.textContent);
+    });
+    
+    const modificationsToggle = document.getElementById('modificationsToggle');
+    const modificationsMenu = document.getElementById('modificationsMenu');
+    
+    if (modificationsToggle && modificationsMenu) {
+        modificationsToggle.addEventListener('click', function() {
+            const isExpanded = modificationsMenu.style.display !== 'none';
+            
+            if (isExpanded) {
+                modificationsMenu.style.display = 'none';
+                this.querySelector('i').classList.remove('fa-chevron-up');
+                this.querySelector('i').classList.add('fa-chevron-down');
+            } else {
+                modificationsMenu.style.display = 'block';
+                this.querySelector('i').classList.remove('fa-chevron-down');
+                this.querySelector('i').classList.add('fa-chevron-up');
+            }
+        });
+
+        modificationsMenu.style.display = 'none';
     }
 });
