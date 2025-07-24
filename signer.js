@@ -99,60 +99,60 @@ document.addEventListener("DOMContentLoaded", function () {
         const modifyBundleId = document.getElementById('modifyBundleId');
         const newBundleId = document.getElementById('newBundleId');
         if (modifyBundleId && modifyBundleId.checked && newBundleId && newBundleId.value.trim()) {
-            cyanFlags.push(`--bundle-id "${newBundleId.value.trim()}"`);
+            cyanFlags.push(`-b "${newBundleId.value.trim()}"`);
         }
         
         // App Name modification
         const modifyAppName = document.getElementById('modifyAppName');
         const newAppName = document.getElementById('newAppName');
         if (modifyAppName && modifyAppName.checked && newAppName && newAppName.value.trim()) {
-            cyanFlags.push(`--name "${newAppName.value.trim()}"`);
+            cyanFlags.push(`-n "${newAppName.value.trim()}"`);
         }
         
         // Version modification
         const modifyVersion = document.getElementById('modifyVersion');
         const newVersion = document.getElementById('newVersion');
         if (modifyVersion && modifyVersion.checked && newVersion && newVersion.value.trim()) {
-            cyanFlags.push(`--version "${newVersion.value.trim()}"`);
+            cyanFlags.push(`-v "${newVersion.value.trim()}"`);
         }
         
         // Minimum OS modification
         const modifyMinOS = document.getElementById('modifyMinOS');
         const newMinOS = document.getElementById('newMinOS');
         if (modifyMinOS && modifyMinOS.checked && newMinOS && newMinOS.value.trim()) {
-            cyanFlags.push(`--min-os "${newMinOS.value.trim()}"`);
+            cyanFlags.push(`-m "${newMinOS.value.trim()}"`);
         }
         
         // Inject Dylib
         const injectDylib = document.getElementById('injectDylib');
         const dylibFile = document.getElementById('dylibFile');
         if (injectDylib && injectDylib.checked && dylibFile && dylibFile.files.length > 0) {
-            cyanFlags.push(`--inject "${dylibFile.files[0].name}"`);
+            cyanFlags.push(`-z "${dylibFile.files[0].name}"`);
         }
         
         // Inject Deb
         const injectDeb = document.getElementById('injectDeb');
         const debFile = document.getElementById('debFile');
         if (injectDeb && injectDeb.checked && debFile && debFile.files.length > 0) {
-            cyanFlags.push(`--inject "${debFile.files[0].name}"`);
+            cyanFlags.push(`-f "${debFile.files[0].name}"`);
         }
         
         // Remove Watch App
         const removeWatchApp = document.getElementById('removeWatchApp');
         if (removeWatchApp && removeWatchApp.checked) {
-            cyanFlags.push('--remove-watch');
+            cyanFlags.push('-u');
         }
         
         // Remove App Extensions
         const removeAppExtensions = document.getElementById('removeAppExtensions');
         if (removeAppExtensions && removeAppExtensions.checked) {
-            cyanFlags.push('--remove-extensions');
+            cyanFlags.push('-w');
         }
         
         // Thin to ARM64
         const thinARM64 = document.getElementById('thinARM64');
         if (thinARM64 && thinARM64.checked) {
-            cyanFlags.push('--thin');
+            cyanFlags.push('-s');
         }
 
         resultDiv.textContent = "";
